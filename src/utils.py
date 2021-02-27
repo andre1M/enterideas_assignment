@@ -1,4 +1,4 @@
-from src.global_vars import DEVICE, PARAMS_DIR
+from global_vars import DEVICE, PARAMS_DIR
 
 from torch import nn, optim
 import torch

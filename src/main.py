@@ -1,6 +1,6 @@
-from src.global_vars import DEVICE, EPOCHS, LR, BATCH_SIZE, THRESHOLD, SEED
-from src.dataset import CustomDataset
-from src.utils import set_parameter_requires_grad, train
+from global_vars import DEVICE, EPOCHS, LR, BATCH_SIZE, THRESHOLD, SEED
+from dataset import CustomDataset
+from utils import set_parameter_requires_grad, train
 
 from torch.utils.data import random_split, DataLoader
 from torchvision import transforms, models

@@ -60,7 +60,7 @@ dataloaders = dict(train=train_loader, val=valid_loader)
 
 # load model
 feature_extract = True
-model = models.resnet18(pretrained=True)
+model = models.resnet50(pretrained=True)
 set_parameter_requires_grad(model, feature_extract)
 num_features = model.fc.in_features
 model.fc = nn.Linear(num_features, 1)
@@ -71,6 +71,9 @@ model.fc = nn.Sequential(
 
 print('Device:', DEVICE)
 model = model.to(DEVICE)
+
+# load params
+model.load_state_dict(torch.load('../params/resnet50_old.pth'))
 
 params_to_update = model.parameters()
 print("Params to learn:")
@@ -87,14 +90,14 @@ else:
 print()
 
 criterion = nn.BCELoss()
-optim = optim.Adam(params=params_to_update, lr=LR)
+optimizer = optim.Adam(params=params_to_update, lr=LR)
 
 # train
 model, hist = train(
     model=model,
     dataloaders=dataloaders,
     criterion=criterion,
-    optimizer=optim,
+    optimizer=optimizer,
     num_epochs=EPOCHS,
     threshold=THRESHOLD
 )

@@ -1,4 +1,4 @@
-from global_vars import DEVICE, PARAMS_DIR
+from global_vars import DEVICE, PARAMS_DIR, LR
 
 from torch import nn, optim
 import torch
@@ -17,7 +17,7 @@ def train(
         criterion: nn.Module,
         optimizer: optim.Optimizer,
         num_epochs: int = 25,
-        threshold: Optional[float] = 0.5
+        threshold: float = 0.5,
 ) -> Tuple[nn.Module, list]:
     since = time.time()
     val_acc_history = list()
@@ -76,6 +76,7 @@ def train(
                 val_acc_history.append(epoch_acc)
 
         torch.save(best_model_wts, os.path.join(PARAMS_DIR, 'resnet50.pth'))
+        update_learn_rate(epoch, LR, optimizer)
         print()
 
     # Print final statistics
@@ -89,6 +90,17 @@ def train(
     model.load_state_dict(best_model_wts)
 
     return model, val_acc_history
+
+
+def update_learn_rate(epoch: int, lr: float, optimizer: optim.Optimizer) -> None:
+    if epoch < 10:
+        pass
+    elif epoch < 20:
+        lr *= 1e-1
+    else:
+        lr *= 1e-2
+    for param_group in optimizer.param_groups:
+        param_group['lr'] = lr
 
 
 def set_parameter_requires_grad(model, feature_extracting) -> None:

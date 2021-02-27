@@ -4,7 +4,7 @@ import torch
 SEED = 11
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 EPOCHS = 200
-LR = 1e-3
+LR = 1e-2
 BATCH_SIZE = 128
 THRESHOLD = 0.65
 PARAMS_DIR = '../params'

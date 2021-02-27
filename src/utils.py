@@ -1,9 +1,10 @@
-from global_vars import DEVICE, PARAMS_DIR, LR
+from global_vars import DEVICE, OUTPUT_DIR, LR
 
 from torch import nn, optim
 import torch
 
-from typing import Tuple, Optional
+from typing import Tuple
+import pickle
 import time
 import copy
 import os
@@ -75,8 +76,15 @@ def train(
             if phase == 'val':
                 val_acc_history.append(epoch_acc)
 
-        torch.save(best_model_wts, os.path.join(PARAMS_DIR, 'resnet50.pth'))
+        torch.save(best_model_wts, os.path.join(OUTPUT_DIR, 'resnet50.pth'))
         update_learn_rate(epoch, LR, optimizer)
+        # save accuracy history
+        open_file = open(
+            os.path.join(OUTPUT_DIR, 'val_acc_history.pkl'),
+            'wb'
+        )
+        pickle.dump(val_acc_history, open_file)
+        open_file.close()
         print()
 
     # Print final statistics

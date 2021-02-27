@@ -7,4 +7,4 @@ EPOCHS = 200
 LR = 1e-2
 BATCH_SIZE = 128
 THRESHOLD = 0.65
-PARAMS_DIR = '../params'
+OUTPUT_DIR = '../output'

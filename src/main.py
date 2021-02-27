@@ -73,7 +73,7 @@ print('Device:', DEVICE)
 model = model.to(DEVICE)
 
 # load params
-model.load_state_dict(torch.load('../params/resnet50_old.pth'))
+model.load_state_dict(torch.load('../output/resnet50_old.pth'))
 
 params_to_update = model.parameters()
 print("Params to learn:")

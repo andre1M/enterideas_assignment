@@ -1,6 +1,9 @@
 from global_vars import DEVICE, OUTPUT_DIR, LR
 
+from torchvision import datasets, transforms
+from torch.utils.data import DataLoader
 from torch import nn, optim
+import numpy as np
 import torch
 
 from typing import Tuple
@@ -101,14 +104,33 @@ def train(
 
 
 def update_learn_rate(epoch: int, lr: float, optimizer: optim.Optimizer) -> None:
-    if epoch < 10:
+    if epoch <= 5:
         pass
-    elif epoch < 20:
+    elif epoch <= 10:
         lr *= 1e-1
     else:
         lr *= 1e-2
     for param_group in optimizer.param_groups:
         param_group['lr'] = lr
+
+
+def compute_statistics(dataset_path: str) -> Tuple[list, list]:
+    dataset = datasets.ImageFolder(
+        root=dataset_path,
+        transform=transforms.Compose([
+            transforms.Resize((224, 224)),
+            transforms.ToTensor()
+        ])
+    )
+    dataloader = DataLoader(
+        dataset=dataset,
+        batch_size=len(dataset),
+        shuffle=False
+    )
+    data = next(iter(dataloader))[0]
+    mean = np.mean(data.numpy(), axis=(0, 2, 3))
+    std = np.std(data.numpy(), axis=(0, 2, 3))
+    return mean, std
 
 
 def set_parameter_requires_grad(model, feature_extracting) -> None:

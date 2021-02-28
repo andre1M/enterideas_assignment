@@ -1,6 +1,6 @@
-from global_vars import DEVICE, EPOCHS, LR, BATCH_SIZE, THRESHOLD, SEED
+from global_vars import DEVICE, EPOCHS, LR, BATCH_SIZE, THRESHOLD, SEED, MOMENTUM, WD
 from dataset import CustomDataset
-from utils import set_parameter_requires_grad, train
+from utils import set_parameter_requires_grad, train, compute_statistics
 
 from torch.utils.data import random_split, DataLoader
 from torchvision import transforms, models
@@ -29,6 +29,7 @@ df2 = df2.to_frame()
 df2.columns = ['name']
 df2['label'] = np.zeros(df2.shape[0], dtype=int)
 
+# com
 df = pd.concat([df1, df2], ignore_index=True)
 df.drop_duplicates(subset='name', inplace=True, ignore_index=True)
 print('Label fractions: \n{}'.format(df.label.value_counts(normalize=True)))
@@ -37,14 +38,16 @@ print('Label fractions: \n{}'.format(df.label.value_counts(normalize=True)))
 del df1, df2
 
 # Create dataset
+# mean, std = compute_statistics('../input/images')
+# print(mean, std)
 torch.manual_seed(11)
 transform = transforms.Compose([
     transforms.RandomRotation(30),
     transforms.RandomResizedCrop(224),
     transforms.RandomHorizontalFlip(),
     transforms.ToTensor(),
-    transforms.Normalize([0.5, 0.5, 0.5],
-                         [0.5, 0.5, 0.5])
+    transforms.Normalize(mean=[0.5499041, 0.48758167, 0.41783947],
+                         std=[0.27586618, 0.27561766, 0.27904195])
 ])
 
 images_path = '../input/images'
@@ -59,7 +62,7 @@ valid_loader = DataLoader(dataset_valid, batch_size=BATCH_SIZE, shuffle=True)
 dataloaders = dict(train=train_loader, val=valid_loader)
 
 # load model
-feature_extract = True
+feature_extract = False
 model = models.resnet50(pretrained=True)
 set_parameter_requires_grad(model, feature_extract)
 num_features = model.fc.in_features
@@ -73,7 +76,7 @@ print('Device:', DEVICE)
 model = model.to(DEVICE)
 
 # load params
-model.load_state_dict(torch.load('../output/resnet50_old.pth'))
+model.load_state_dict(torch.load('../output/primary_train/resnet50.pth'))
 
 params_to_update = model.parameters()
 print("Params to learn:")
@@ -90,7 +93,13 @@ else:
 print()
 
 criterion = nn.BCELoss()
-optimizer = optim.Adam(params=params_to_update, lr=LR)
+optimizer = optim.SGD(
+    params=model.parameters(),
+    lr=LR,
+    momentum=MOMENTUM,
+    weight_decay=WD
+)
+# optimizer = optim.Adam(params=params_to_update, lr=LR)
 
 # train
 model, hist = train(

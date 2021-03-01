@@ -82,3 +82,10 @@ due to the lack of compute at my disposal.
 | Weight Decay           | 1e-4  |
 
 ![image info](./output/additional_training.png)
+
+
+# Future work
+
+---
+
+- Add dropout to prevent overfitting

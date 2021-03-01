@@ -1,7 +1,5 @@
 # Quick introduction
 
----
-
 ### Project structure
 
 ```bash
@@ -46,7 +44,6 @@ used here.
 
 # Results discussion
 
----
 ResNet [[1]](https://arxiv.org/abs/1512.03385) is used to solve the binary classification task. In particular, 50 layers
 variation is utilized. **The best validation accuracy at the moment of posting is 92.27%**. It, however, anticipated that
 accuracy will achieve even better results with longer training and less aggressive learn rate reduction.
@@ -85,7 +82,5 @@ due to the lack of compute at my disposal.
 
 
 # Future work
-
----
 
 - Add dropout to prevent overfitting
